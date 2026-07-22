@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Latch — The AI Market Coach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-deep:#0B1230;
+    --navy:#0E1A44;
+    --blue-1:#1C3FDB;
+    --blue-2:#3E6BFF;
+    --blue-3:#5B86FF;
+    --teal:#2FE8C8;
+    --teal-dark:#0E9E86;
+    --ink:#EAF0FF;
+    --ink-dim:#AFC0F2;
+    --card:#101C4C;
+    --card-line:rgba(255,255,255,0.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--navy-deep);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+  }
+  h1,h2,h3,h4,.display{font-family:'Sora',sans-serif;}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 28px;}
+
+  nav{position:sticky;top:0;z-index:50;background:rgba(11,18,48,0.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--card-line);}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;}
+  .brand{display:flex;align-items:center;gap:8px;font-family:'Sora',sans-serif;font-weight:800;font-size:20px;}
+  .brand .dot{width:14px;height:14px;border-radius:5px;background:linear-gradient(135deg,var(--blue-2),var(--teal));}
+  nav ul{list-style:none;display:flex;gap:26px;}
+  nav a{color:var(--ink-dim);text-decoration:none;font-size:14px;font-weight:500;}
+  nav a:hover{color:var(--ink);}
+  .nav-cta{background:linear-gradient(135deg,var(--blue-2),var(--teal-dark));color:#fff;padding:9px 20px;border-radius:8px;font-weight:600;font-size:14px;text-decoration:none;}
+
+  .hero{
+    position:relative;overflow:hidden;
+    padding:110px 28px 90px;
+    background:linear-gradient(160deg,var(--blue-1) 0%, var(--navy) 55%, var(--navy-deep) 100%);
+    text-align:center;
+  }
+  .hero::before{
+    content:'';position:absolute;top:-120px;right:-120px;width:420px;height:420px;
+    border-radius:50%;background:radial-gradient(circle,var(--teal) 0%, transparent 70%);opacity:0.18;
+  }
+  .eyebrow{display:inline-block;font-size:12.5px;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:var(--teal);margin-bottom:18px;}
+  .hero h1{font-size:clamp(36px,6vw,58px);font-weight:800;letter-spacing:-1.2px;margin-bottom:18px;position:relative;}
+  .hero h1 .grad{background:linear-gradient(90deg,var(--teal),var(--blue-3));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .hero p{color:var(--ink-dim);font-size:18px;max-width:600px;margin:0 auto 34px;position:relative;}
+  .cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative;}
+  .btn-primary{background:linear-gradient(135deg,var(--blue-2),var(--teal-dark));color:#fff;padding:14px 30px;border-radius:9px;font-weight:600;font-size:15px;text-decoration:none;border:none;cursor:pointer;}
+  .btn-secondary{border:1px solid rgba(255,255,255,0.2);color:var(--ink);padding:14px 30px;border-radius:9px;font-weight:600;font-size:15px;text-decoration:none;background:transparent;cursor:pointer;}
+
+  section{padding:84px 28px;}
+  .section-alt{background:var(--navy);}
+  .section-head{text-align:center;max-width:600px;margin:0 auto 54px;}
+  h2{font-size:clamp(26px,4vw,36px);font-weight:800;letter-spacing:-0.8px;margin-bottom:12px;}
+  .section-head p{color:var(--ink-dim);font-size:16px;}
+
+  .problem-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:22px;max-width:960px;margin:0 auto;}
+  .p-card{background:var(--card);border:1px solid var(--card-line);border-radius:14px;padding:26px;}
+  .p-card .num{color:var(--teal);font-weight:800;font-size:13px;letter-spacing:1px;margin-bottom:10px;}
+  .p-card h3{font-size:17px;margin-bottom:8px;}
+  .p-card p{color:var(--ink-dim);font-size:14px;}
+
+  /* PHASE STRIP */
+  .phase{display:flex;align-items:center;justify-content:center;gap:10px;max-width:820px;margin:0 auto 60px;flex-wrap:wrap;}
+  .phase-step{background:var(--card);border:1px solid var(--card-line);border-radius:999px;padding:10px 20px;font-size:13px;font-weight:600;color:var(--ink-dim);}
+  .phase-step.active{background:linear-gradient(135deg,var(--blue-2),var(--teal-dark));color:#fff;border:none;}
+  .phase-arrow{color:var(--ink-dim);font-size:16px;}
+
+  /* DEMO */
+  .demo-frame{display:flex;justify-content:center;}
+  .phone{width:380px;max-width:100%;background:var(--card);border-radius:26px;padding:22px;border:1px solid var(--card-line);}
+  .asset-toggle{display:flex;gap:8px;margin-bottom:16px;background:rgba(255,255,255,0.04);border-radius:10px;padding:4px;}
+  .asset-toggle button{flex:1;padding:9px;border-radius:8px;border:none;background:transparent;color:var(--ink-dim);font-weight:600;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;}
+  .asset-toggle button.active{background:linear-gradient(135deg,var(--blue-2),var(--teal-dark));color:#fff;}
+  .demo-tag{font-size:12px;color:var(--teal);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+  .demo-title{font-size:17px;font-weight:700;margin-bottom:10px;font-family:'Sora',sans-serif;}
+  .demo-body{font-size:14px;color:var(--ink-dim);line-height:1.6;}
+  .demo-nav{display:flex;gap:10px;margin-top:18px;}
+  .demo-nav button{flex:1;padding:12px;border-radius:9px;border:1px solid rgba(255,255,255,0.15);background:transparent;color:var(--ink);font-weight:600;cursor:pointer;font-size:14px;font-family:'Inter',sans-serif;}
+  .demo-nav button.primary{background:linear-gradient(135deg,var(--blue-2),var(--teal-dark));border:none;flex:2;}
+  .badge-correct{background:rgba(47,232,200,0.15);color:var(--teal);padding:3px 10px;border-radius:6px;font-size:12px;display:inline-block;margin-top:8px;font-weight:600;}
+  .form-row{display:flex;gap:10px;margin:14px 0;}
+  .form-row button{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.03);color:var(--ink);cursor:pointer;font-size:14px;font-family:'Inter',sans-serif;}
+  .form-row button.selected{border-color:var(--teal);color:var(--teal);}
+  input[type=range]{width:100%;accent-color:var(--teal);}
+  .conf-label{font-size:13px;color:var(--ink-dim);margin-bottom:4px;display:block;}
+  .challenge-btns{display:flex;gap:10px;margin-top:14px;}
+  .challenge-btns button{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.03);color:var(--ink);cursor:pointer;font-size:13px;font-family:'Inter',sans-serif;}
+  .exposure-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .exposure-name{font-size:12.5px;width:140px;flex-shrink:0;color:var(--ink-dim);}
+  .exposure-bar{flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;}
+  .exposure-fill{height:100%;}
+  .exposure-pct{font-size:12px;width:32px;text-align:right;color:var(--ink-dim);}
+  .exposure-note{margin-top:14px;font-size:13px;color:var(--ink-dim);background:rgba(255,255,255,0.04);padding:10px 12px;border-radius:8px;}
+
+  .diff-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;max-width:1000px;margin:0 auto;}
+  .diff-card{background:var(--card);border:1px solid var(--card-line);border-radius:14px;padding:28px;position:relative;overflow:hidden;}
+  .diff-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--teal),var(--blue-3));}
+  .diff-tag{color:var(--blue-3);font-size:11.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;display:block;}
+  .diff-card h3{font-size:19px;margin-bottom:9px;}
+  .diff-card p{color:var(--ink-dim);font-size:14px;}
+
+  /* DASHBOARD COMPONENTS */
+  .dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:1000px;margin:0 auto;}
+  @media(max-width:820px){.dash-grid{grid-template-columns:1fr;}}
+  .dash-card{background:var(--card);border:1px solid var(--card-line);border-radius:16px;padding:26px;}
+  .dash-card h3{font-size:16px;font-weight:700;margin-bottom:4px;}
+  .dash-sub{font-size:12.5px;color:var(--ink-dim);margin-bottom:18px;}
+
+  .ticker-price{font-size:40px;font-weight:800;font-family:'Sora',sans-serif;}
+  .ticker-change{font-size:14px;font-weight:600;margin-left:8px;}
+  .up{color:var(--teal);}
+  .down{color:#FF8F8F;}
+  .spark{display:flex;align-items:flex-end;gap:3px;height:56px;margin-top:18px;}
+  .spark span{flex:1;background:linear-gradient(180deg,var(--blue-3),var(--teal));border-radius:2px 2px 0 0;opacity:0.85;}
+  .ticker-meta{display:flex;justify-content:space-between;margin-top:16px;font-size:12px;color:var(--ink-dim);}
+
+  .predictor-select{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+  .predictor-select button{padding:8px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.03);color:var(--ink-dim);font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+  .predictor-select button.active{background:linear-gradient(135deg,var(--blue-2),var(--teal-dark));color:#fff;border:none;}
+  .predictor-result{background:rgba(255,255,255,0.03);border-radius:10px;padding:16px;}
+  .pred-bar-track{height:10px;border-radius:5px;background:rgba(255,255,255,0.08);overflow:hidden;display:flex;margin:10px 0 14px;}
+  .pred-bar-bull{background:var(--teal);}
+  .pred-bar-bear{background:#FF8F8F;}
+  .pred-labels{display:flex;justify-content:space-between;font-size:12.5px;font-weight:600;}
+  .pred-signals{margin-top:14px;display:flex;flex-direction:column;gap:8px;}
+  .pred-signal{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink-dim);}
+  .pred-signal b{color:var(--ink);font-weight:600;}
+
+  .exposure-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .exposure-name{font-size:12.5px;width:150px;flex-shrink:0;color:var(--ink-dim);}
+  .exposure-bar{flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;}
+  .exposure-fill{height:100%;}
+  .exposure-pct{font-size:12px;width:34px;text-align:right;color:var(--ink-dim);}
+  .exposure-note{margin-top:8px;font-size:12.5px;color:var(--ink-dim);background:rgba(255,255,255,0.04);padding:10px 12px;border-radius:8px;}
+
+  .cal-bars{display:flex;align-items:flex-end;gap:14px;height:150px;margin-top:8px;}
+  .cal-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
+  .cal-bar-pair{display:flex;gap:4px;align-items:flex-end;height:100%;width:100%;justify-content:center;}
+  .cal-bar{width:14px;border-radius:3px 3px 0 0;}
+  .cal-bar.predicted{background:rgba(255,255,255,0.18);}
+  .cal-bar.actual{background:var(--teal);}
+  .cal-label{font-size:11px;color:var(--ink-dim);margin-top:8px;}
+  .cal-legend{display:flex;gap:16px;margin-top:16px;font-size:12px;color:var(--ink-dim);}
+  .cal-legend span{display:inline-flex;align-items:center;gap:6px;}
+  .cal-legend i{width:10px;height:10px;border-radius:2px;display:inline-block;}
+
+  /* CHATBOT */
+  .chat-frame{max-width:760px;margin:0 auto;background:var(--card);border:1px solid var(--card-line);border-radius:16px;overflow:hidden;}
+  .chat-header{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--card-line);}
+  .chat-header .dot{width:10px;height:10px;border-radius:50%;background:var(--teal);}
+  .chat-header b{font-family:'Sora',sans-serif;font-size:14px;}
+  .chat-header span{font-size:12px;color:var(--ink-dim);margin-left:auto;}
+  .chat-body{padding:20px;height:360px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;}
+  .msg{max-width:78%;padding:11px 14px;border-radius:12px;font-size:13.5px;line-height:1.5;}
+  .msg.bot{background:rgba(255,255,255,0.05);align-self:flex-start;border-bottom-left-radius:3px;}
+  .msg.user{background:linear-gradient(135deg,var(--blue-2),var(--teal-dark));color:#fff;align-self:flex-end;border-bottom-right-radius:3px;}
+  .msg-signals{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .msg-signals button{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--ink-dim);font-size:11.5px;padding:6px 10px;border-radius:999px;cursor:pointer;font-family:'Inter',sans-serif;}
+  .msg-signals button:hover{color:var(--ink);border-color:rgba(255,255,255,0.25);}
+  .chat-quick{display:flex;gap:8px;padding:0 20px 14px;flex-wrap:wrap;}
+  .chat-quick button{background:rgba(255,255,255,0.04);border:1px solid var(--card-line);color:var(--ink-dim);font-size:12px;padding:7px 12px;border-radius:999px;cursor:pointer;font-family:'Inter',sans-serif;}
+  .chat-input-row{display:flex;gap:10px;padding:14px 16px;border-top:1px solid var(--card-line);}
+  .chat-input-row input{flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--card-line);border-radius:9px;padding:11px 14px;color:var(--ink);font-size:13.5px;font-family:'Inter',sans-serif;}
+  .chat-input-row input::placeholder{color:var(--ink-dim);}
+  .chat-input-row input:focus{outline:none;border-color:var(--blue-3);}
+  .chat-input-row button{background:linear-gradient(135deg,var(--blue-2),var(--teal-dark));color:#fff;border:none;border-radius:9px;padding:0 20px;font-weight:600;font-size:13.5px;cursor:pointer;font-family:'Inter',sans-serif;}
+
+  /* PHONE CALL SECTION */
+  .call-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;max-width:1000px;margin:0 auto;}
+  @media(max-width:820px){.call-grid{grid-template-columns:1fr;}}
+  .call-visual{display:flex;justify-content:center;}
+  .call-card{width:280px;background:var(--card);border:1px solid var(--card-line);border-radius:22px;padding:28px 22px;text-align:center;}
+  .call-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--blue-2),var(--teal));margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-weight:800;font-size:22px;color:#fff;}
+  .call-status{font-size:12.5px;color:var(--teal);font-weight:600;margin-bottom:4px;letter-spacing:0.5px;}
+  .call-status .ring{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--teal);margin-right:6px;animation:pulse 1.4s infinite;}
+  @keyframes pulse{0%{opacity:1;}50%{opacity:0.3;}100%{opacity:1;}}
+  .call-name{font-family:'Sora',sans-serif;font-weight:700;font-size:17px;margin-bottom:2px;}
+  .call-sub{font-size:12.5px;color:var(--ink-dim);margin-bottom:20px;}
+  .call-actions{display:flex;justify-content:center;gap:16px;}
+  .call-btn{width:48px;height:48px;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;}
+  .call-btn.accept{background:var(--teal);color:var(--navy-deep);}
+  .call-btn.decline{background:#FF6B6B;color:#fff;}
+  .call-steps{display:flex;flex-direction:column;gap:16px;}
+  .call-step{display:flex;gap:14px;}
+  .call-step .n{width:28px;height:28px;flex-shrink:0;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid var(--card-line);display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;color:var(--teal);}
+  .call-step p{font-size:13.5px;color:var(--ink-dim);}
+  .call-step b{color:var(--ink);}
+
+  /* CONTACT FORM */
+  .contact-frame{max-width:560px;margin:0 auto;background:var(--card);border:1px solid var(--card-line);border-radius:16px;padding:32px;}
+  .contact-frame label{display:block;font-size:12.5px;color:var(--ink-dim);margin-bottom:6px;font-weight:600;}
+  .contact-frame input,.contact-frame textarea{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--card-line);border-radius:9px;padding:12px 14px;color:var(--ink);font-size:14px;font-family:'Inter',sans-serif;margin-bottom:18px;}
+  .contact-frame input:focus,.contact-frame textarea:focus{outline:none;border-color:var(--blue-3);}
+  .contact-frame textarea{resize:vertical;min-height:90px;}
+  .contact-frame button{width:100%;background:linear-gradient(135deg,var(--blue-2),var(--teal-dark));color:#fff;border:none;border-radius:9px;padding:13px;font-weight:600;font-size:14.5px;cursor:pointer;font-family:'Inter',sans-serif;}
+  .contact-confirm{display:none;text-align:center;padding:20px 0;}
+  .contact-confirm .check{width:48px;height:48px;border-radius:50%;background:var(--teal);color:var(--navy-deep);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:22px;font-weight:800;}
+  .contact-confirm h4{font-family:'Sora',sans-serif;margin-bottom:6px;}
+  .contact-confirm p{font-size:13.5px;color:var(--ink-dim);}
+
+  .closing{text-align:center;padding:100px 28px;background:linear-gradient(200deg,var(--navy) 0%, var(--blue-1) 130%);}
+  .closing h2{max-width:680px;margin:0 auto 28px;}
+  .closing .hl{background:linear-gradient(90deg,var(--teal),var(--blue-3));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  footer{text-align:center;padding:26px 28px;color:var(--ink-dim);font-size:13px;border-top:1px solid var(--card-line);}
+  .disclaimer{max-width:700px;margin:56px auto 0;text-align:center;color:var(--ink-dim);font-size:12.5px;border-top:1px solid var(--card-line);padding-top:24px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span>Latch</div>
+    <ul>
+      <li><a href="#problem">Problem</a></li>
+      <li><a href="#demo">Demo</a></li>
+      <li><a href="#dashboard">Tools</a></li>
+      <li><a href="#chat">Chatbot</a></li>
+      <li><a href="#call">The Call</a></li>
+      <li><a href="#diff">Why Latch</a></li>
+    </ul>
+    <a class="nav-cta" href="#demo">Try Demo</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="eyebrow">AI Market Coaching · Bitcoin + Stocks</div>
+  <h1>The AI market coach<br>that <span class="grad">calls you</span> daily.</h1>
+  <p>Latch reviews your predictions, challenges your thinking, and tracks whether your reasoning actually improves over time — across Bitcoin and individual stocks.</p>
+  <div class="cta-row">
+    <a class="btn-primary" href="#demo">Try the Demo</a>
+    <a class="btn-secondary" href="#problem">Learn More</a>
+  </div>
+</section>
+
+<section id="problem">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">The Problem</span>
+      <h2>Investors research randomly. No one keeps score.</h2>
+      <p>Research is scattered across disparate sources, predictions are rarely written down, and there's no feedback loop to learn from being wrong.</p>
+    </div>
+    <div class="problem-grid">
+      <div class="p-card"><div class="num">01</div><h3>Unstructured research</h3><p>Information is scattered across news, charts, and social feeds with no routine.</p></div>
+      <div class="p-card"><div class="num">02</div><h3>No recorded reasoning</h3><p>Predictions and the logic behind them are rarely written down for later review.</p></div>
+      <div class="p-card"><div class="num">03</div><h3>No feedback loop</h3><p>Without tracking outcomes, there's no way to learn from mistakes and improve.</p></div>
+      <div class="p-card"><div class="num">04</div><h3>Chatbots that just answer</h3><p>Most AI tools give a verdict instead of teaching you how to reason toward one.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-alt">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Strategy</span>
+      <h2>Why we started with Bitcoin</h2>
+      <p>Deep, accessible data and no earnings calendar made Bitcoin the fastest way to prove the coaching loop — before expanding.</p>
+    </div>
+    <div class="phase">
+      <div class="phase-step active">Bitcoin — proving ground</div>
+      <span class="phase-arrow">→</span>
+      <div class="phase-step">Individual stocks</div>
+      <span class="phase-arrow">→</span>
+      <div class="phase-step">Full portfolio coaching</div>
+    </div>
+  </div>
+</section>
+
+<section id="demo">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Try It</span>
+      <h2>Walk through a daily call</h2>
+      <p>Switch between Bitcoin and a stock to see how the check-in adapts.</p>
+    </div>
+    <div class="demo-frame">
+      <div class="phone">
+        <div class="asset-toggle">
+          <button id="tab-btc" class="active">Bitcoin</button>
+          <button id="tab-stock">Stock · NVDA</button>
+        </div>
+        <div id="screens"></div>
+        <div class="demo-nav">
+          <button id="back">Back</button>
+          <button id="next" class="primary">Continue</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="dashboard">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Inside the App</span>
+      <h2>The tools behind every call</h2>
+      <p>A sample of what Latch tracks in the background — live prices, a stock predictor, hidden exposure, and its own accuracy.</p>
+    </div>
+    <div class="dash-grid">
+
+      <div class="dash-card">
+        <h3>Bitcoin price</h3>
+        <div class="dash-sub">Live during your check-in</div>
+        <div>
+          <span class="ticker-price" id="btc-price">$64,210</span>
+          <span class="ticker-change up" id="btc-change">▲ 2.1%</span>
+        </div>
+        <div class="spark" id="btc-spark"></div>
+        <div class="ticker-meta">
+          <span>24h volume: $38.2B</span>
+          <span>Updated just now</span>
+        </div>
+      </div>
+
+      <div class="dash-card">
+        <h3>Stock predictor</h3>
+        <div class="dash-sub">Pick a ticker to see today's signal breakdown</div>
+        <div class="predictor-select">
+          <button class="pred-btn active" data-ticker="NVDA">NVDA</button>
+          <button class="pred-btn" data-ticker="AAPL">AAPL</button>
+          <button class="pred-btn" data-ticker="TSLA">TSLA</button>
+          <button class="pred-btn" data-ticker="MSFT">MSFT</button>
+        </div>
+        <div class="predictor-result">
+          <div class="pred-labels">
+            <span style="color:var(--teal)" id="pred-bull-label">Bullish 64%</span>
+            <span style="color:#FF8F8F" id="pred-bear-label">Bearish 36%</span>
+          </div>
+          <div class="pred-bar-track">
+            <div class="pred-bar-bull" id="pred-bar-bull" style="width:64%"></div>
+            <div class="pred-bar-bear" id="pred-bar-bear" style="width:36%"></div>
+          </div>
+          <div class="pred-signals" id="pred-signals"></div>
+        </div>
+      </div>
+
+      <div class="dash-card">
+        <h3>Hidden exposure map</h3>
+        <div class="dash-sub">How correlated your holdings really are to Bitcoin</div>
+        <div id="exposure-list"></div>
+        <div class="exposure-note">86% of this sample portfolio moves with a single BTC price shock.</div>
+      </div>
+
+      <div class="dash-card">
+        <h3>Calibration score</h3>
+        <div class="dash-sub">Predicted confidence vs. what actually happened</div>
+        <div class="cal-bars" id="cal-bars"></div>
+        <div class="cal-legend">
+          <span><i style="background:rgba(255,255,255,0.3)"></i>Predicted confidence</span>
+          <span><i style="background:var(--teal)"></i>Actual accuracy</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="chat">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Ask Latch</span>
+      <h2>The chatbot that shows its work</h2>
+      <p>Ask about Bitcoin or a stock. Latch answers, weighs its signals, and lets you drill into any of them — or push back.</p>
+    </div>
+    <div class="chat-frame">
+      <div class="chat-header">
+        <span class="dot"></span>
+        <b>Latch</b>
+        <span>Bitcoin & Stocks</span>
+      </div>
+      <div class="chat-body" id="chat-body"></div>
+      <div class="chat-quick">
+        <button data-q="Will Bitcoin go up this week?">Will Bitcoin go up this week?</button>
+        <button data-q="Is NVDA a good bet right now?">Is NVDA a good bet right now?</button>
+        <button data-q="I disagree with you">I disagree with you</button>
+      </div>
+      <div class="chat-input-row">
+        <input type="text" id="chat-input" placeholder="Ask about Bitcoin, NVDA, AAPL, TSLA...">
+        <button id="chat-send">Send</button>
+      </div>
+    </div>
+  </div></section>
+
+<section id="call" class="section-alt">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">The Core Mechanic</span>
+      <h2>Latch calls you. You don't call it.</h2>
+      <p>That's the whole point — a scheduled voice call, same time every day, so research becomes a habit instead of something that only happens when the market crashes.</p>
+    </div>
+    <div class="call-grid">
+      <div class="call-visual">
+        <div class="call-card">
+          <div class="call-status"><span class="ring"></span>Incoming call</div>
+          <div class="call-avatar">L</div>
+          <div class="call-name">Latch</div>
+          <div class="call-sub">Daily check-in · 8:00 AM</div>
+          <div class="call-actions">
+            <button class="call-btn decline">✕</button>
+            <button class="call-btn accept">✓</button>
+          </div>
+        </div>
+      </div>
+      <div class="call-steps">
+        <div class="call-step"><div class="n">1</div><p><b>You set the time.</b> Pick one slot — morning coffee, commute, lunch break — and Latch calls that time, every day.</p></div>
+        <div class="call-step"><div class="n">2</div><p><b>10-15 minutes, not an hour.</b> Long enough for a real conversation, short enough that you'll actually keep the habit.</p></div>
+        <div class="call-step"><div class="n">3</div><p><b>It's a real conversation.</b> You talk, Latch listens and responds — reviewing yesterday, updating you on today, and pushing back on your thinking, out loud.</p></div>
+        <div class="call-step"><div class="n">4</div><p><b>Notes are waiting after.</b> When you hang up, everything is already logged in your decision journal — nothing to type up yourself.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="diff">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Why Latch</span>
+      <h2>Three things no other finance app does</h2>
+    </div>
+    <div class="diff-grid">
+      <div class="diff-card"><span class="diff-tag">Calibration Score</span><h3>Latch keeps score on itself</h3><p>When Latch says "70% confident," does that actually happen 70% of the time? A live, honest accuracy score — not black-box confidence.</p></div>
+      <div class="diff-card"><span class="diff-tag">The Challenge</span><h3>It argues the other side</h3><p>Instead of agreeing with your thesis, Latch pushes back with the strongest counter-case — then lets you defend, revise, or drop your view.</p></div>
+      <div class="diff-card"><span class="diff-tag">Decision Journal</span><h3>Your reasoning, remembered</h3><p>Every prediction, its logic, and its outcome is saved automatically — building a searchable history most investors never build for themselves.</p></div>
+    </div>
+    <p class="disclaimer">Latch is a coaching and analysis tool — not a broker, financial advisor, or trade-execution platform. It does not place trades or guarantee outcomes. Predictions are tracked for educational and accountability purposes only.</p>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Get in Touch</span>
+      <h2>Send us a message</h2>
+      <p>Questions, feedback, or want early access to the beta — tell us here.</p>
+    </div>
+    <div class="contact-frame">
+      <form id="contact-form">
+        <label for="c-name">Name</label>
+        <input type="text" id="c-name" placeholder="Your name" required>
+        <label for="c-email">Email</label>
+        <input type="email" id="c-email" placeholder="you@email.com" required>
+        <label for="c-msg">Message</label>
+        <textarea id="c-msg" placeholder="Tell us what you think, or ask us anything." required></textarea>
+        <button type="submit">Send message</button>
+      </form>
+      <div class="contact-confirm" id="contact-confirm">
+        <div class="check">✓</div>
+        <h4>Message sent</h4>
+        <p>Thanks for reaching out — we'll get back to you soon.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="closing">
+  <h2>Other tools try to predict the market <span class="hl">for you.</span><br>Latch makes you better at predicting it <span class="hl">yourself.</span></h2>
+  <div class="cta-row">
+    <a class="btn-primary" href="#demo">Try the Demo</a>
+    <a class="btn-secondary" href="#">Join the Beta</a>
+  </div>
+</section>
+
+<footer>© 2026 Latch. Educational tool only — not financial advice.</footer>
+
+<script>
+const assets = {
+  btc: {
+    label: 'Bitcoin',
+    steps: [
+      { tag:'Yesterday', title:"Yesterday you predicted BTC would rise", body:"Actual result: BTC rose 2.1% after the ETF inflow report. Your confidence was 65%.", type:'badge' },
+      { tag:'Today', title:"Today's market update", body:"BTC is flat overnight. Spot ETF inflows slowed. Fed minutes release at 2pm ET could move volatility.", type:'plain' },
+      { tag:'Your turn', title:"What's your prediction for today?", body:"Pick a direction and set your confidence.", type:'form' },
+      { tag:'Challenge', title:"Latch pushes back", body:"You're bullish on continued ETF demand. But inflows just slowed for the first time in 3 weeks, and Fed minutes could add volatility. Still confident?", type:'challenge' },
+      { tag:'Saved', title:"Call complete", body:"Prediction logged. Calibration score updated: 71% accurate over last 20 calls.", type:'plain' }
+    ]
+  },
+  stock: {
+    label: 'NVDA',
+    steps: [
+      { tag:'Yesterday', title:"Yesterday you predicted NVDA would rise", body:"Actual result: NVDA fell 1.4% after a supplier warned of chip delays. Your confidence was 55%.", type:'badge-wrong' },
+      { tag:'Today', title:"Today's market update", body:"NVDA is up slightly pre-market. Analysts flagged strong data-center demand, but a key supplier's delay is still weighing on sentiment.", type:'plain' },
+      { tag:'Your turn', title:"What's your prediction for today?", body:"Pick a direction and set your confidence.", type:'form' },
+      { tag:'Challenge', title:"Latch pushes back", body:"You're bullish on data-center demand. But yesterday's supplier delay news hasn't fully priced in yet, and earnings are two weeks out. Still confident?", type:'challenge' },
+      { tag:'Saved', title:"Call complete", body:"Prediction logged. Calibration score updated: 64% accurate on NVDA over last 8 calls.", type:'plain' }
+    ]
+  }
+};
+let currentAsset = 'btc';
+let i = 0, conf = 60, direction = null;
+
+function render(){
+  const steps = assets[currentAsset].steps;
+  const s = steps[i];
+  let html = `<div class="demo-tag">${s.tag}</div><div class="demo-title">${s.title}</div><div class="demo-body">${s.body}</div>`;
+
+  if(s.type === 'badge'){
+    html += `<div class="badge-correct">Correct</div>`;
+  } else if(s.type === 'badge-wrong'){
+    html += `<div class="badge-correct" style="background:rgba(255,255,255,0.08);color:#FFB4B4">Incorrect</div>`;
+  } else if(s.type === 'form'){
+    html += `<div class="form-row">
+      <button id="up" class="${direction==='up'?'selected':''}">Bullish</button>
+      <button id="down" class="${direction==='down'?'selected':''}">Bearish</button>
+    </div>
+    <span class="conf-label">Confidence: <span id="confval">${conf}</span>%</span>
+    <input type="range" id="confslider" min="10" max="100" step="5" value="${conf}">`;
+  } else if(s.type === 'challenge'){
+    html += `<div class="challenge-btns"><button id="defend">Defend it</button><button id="revise">Revise</button></div>`;
+  }
+
+  document.getElementById('screens').innerHTML = html;
+  document.getElementById('back').style.visibility = i===0 ? 'hidden':'visible';
+  document.getElementById('next').textContent = i===steps.length-1 ? 'Restart' : 'Continue';
+  document.getElementById('next').style.display = s.type === 'challenge' ? 'none' : 'block';
+
+  if(s.type === 'form'){
+    document.getElementById('up').onclick = ()=>{ direction='up'; render(); };
+    document.getElementById('down').onclick = ()=>{ direction='down'; render(); };
+    document.getElementById('confslider').oninput = e=>{ conf=e.target.value; document.getElementById('confval').textContent=conf; };
+  }
+  if(s.type === 'challenge'){
+    document.getElementById('defend').onclick = ()=>{
+      steps[4].body = `Prediction logged: ${direction||'up'}, ${conf}% confidence, reasoning defended after challenge. Calibration score updated.`;
+      i++; render();
+    };
+    document.getElementById('revise').onclick = ()=>{
+      steps[4].body = "Prediction revised after challenge. Logged with lower confidence. Calibration score updated.";
+      i++; render();
+    };
+  }
+}
+
+document.getElementById('next').onclick = ()=>{
+  const steps = assets[currentAsset].steps;
+  if(i===steps.length-1){ i=0; direction=null; conf=60; render(); return; }
+  i = Math.min(i+1, steps.length-1);
+  render();
+};
+document.getElementById('back').onclick = ()=>{ i=Math.max(i-1,0); render(); };
+
+document.getElementById('tab-btc').onclick = ()=>{
+  currentAsset='btc'; i=0; direction=null; conf=60;
+  document.getElementById('tab-btc').classList.add('active');
+  document.getElementById('tab-stock').classList.remove('active');
+  render();
+};
+document.getElementById('tab-stock').onclick = ()=>{
+  currentAsset='stock'; i=0; direction=null; conf=60;
+  document.getElementById('tab-stock').classList.add('active');
+  document.getElementById('tab-btc').classList.remove('active');
+  render();
+};
+
+render();
+
+/* ---- Bitcoin price ticker ---- */
+(function(){
+  let price = 64210;
+  const sparkVals = [61200,62800,61900,63500,64800,63100,64210];
+  const sparkEl = document.getElementById('btc-spark');
+  function drawSpark(vals){
+    const min = Math.min(...vals), max = Math.max(...vals);
+    sparkEl.innerHTML = vals.map(v=>{
+      const h = 12 + ((v-min)/(max-min || 1))*44;
+      return `<span style="height:${h}px"></span>`;
+    }).join('');
+  }
+  drawSpark(sparkVals);
+  setInterval(()=>{
+    const delta = (Math.random()-0.48) * 180;
+    price = Math.max(58000, price + delta);
+    document.getElementById('btc-price').textContent = '$' + Math.round(price).toLocaleString();
+    const pctEl = document.getElementById('btc-change');
+    const pct = ((price-64210)/64210*100).toFixed(1);
+    pctEl.textContent = (pct>=0?'▲ ':'▼ ') + Math.abs(pct) + '%';
+    pctEl.className = 'ticker-change ' + (pct>=0?'up':'down');
+    sparkVals.shift(); sparkVals.push(price);
+    drawSpark(sparkVals);
+  }, 2200);
+})();
+
+/* ---- Stock predictor ---- */
+(function(){
+  const data = {
+    NVDA: { bull:64, signals:[['Earnings trend','Positive'],['Technical momentum','Strong'],['Sentiment','Mixed'],['Insider activity','Neutral']] },
+    AAPL: { bull:52, signals:[['Earnings trend','Flat'],['Technical momentum','Weak'],['Sentiment','Cautious'],['Insider activity','Slight buying']] },
+    TSLA: { bull:41, signals:[['Earnings trend','Mixed'],['Technical momentum','Volatile'],['Sentiment','Negative'],['Insider activity','Selling']] },
+    MSFT: { bull:71, signals:[['Earnings trend','Positive'],['Technical momentum','Strong'],['Sentiment','Positive'],['Insider activity','Neutral']] }
+  };
+  function update(ticker){
+    const d = data[ticker];
+    const bear = 100 - d.bull;
+    document.getElementById('pred-bull-label').textContent = `Bullish ${d.bull}%`;
+    document.getElementById('pred-bear-label').textContent = `Bearish ${bear}%`;
+    document.getElementById('pred-bar-bull').style.width = d.bull + '%';
+    document.getElementById('pred-bar-bear').style.width = bear + '%';
+    document.getElementById('pred-signals').innerHTML = d.signals.map(s=>
+      `<div class="pred-signal"><span>${s[0]}</span><b>${s[1]}</b></div>`
+    ).join('');
+  }
+  document.querySelectorAll('.pred-btn').forEach(btn=>{
+    btn.onclick = ()=>{
+      document.querySelectorAll('.pred-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      update(btn.dataset.ticker);
+    };
+  });
+  update('NVDA');
+})();
+
+/* ---- Exposure map ---- */
+(function(){
+  const holdings = [
+    { name:'Bitcoin (BTC)', corr:100 },
+    { name:'Coinbase (COIN)', corr:82 },
+    { name:'MicroStrategy (MSTR)', corr:91 },
+    { name:'Bitcoin miner (RIOT)', corr:76 }
+  ];
+  document.getElementById('exposure-list').innerHTML = holdings.map(h=>{
+    const color = h.corr>=90 ? '#FF8F8F' : h.corr>=80 ? '#FFC773' : 'var(--teal)';
+    return `<div class="exposure-row">
+      <span class="exposure-name">${h.name}</span>
+      <div class="exposure-bar"><div class="exposure-fill" style="width:${h.corr}%;background:${color}"></div></div>
+      <span class="exposure-pct">${h.corr}%</span>
+    </div>`;
+  }).join('');
+})();
+
+/* ---- Calibration chart ---- */
+(function(){
+  const buckets = [
+    { label:'50%', predicted:50, actual:47 },
+    { label:'60%', predicted:60, actual:58 },
+    { label:'70%', predicted:70, actual:71 },
+    { label:'80%', predicted:80, actual:74 },
+    { label:'90%', predicted:90, actual:81 }
+  ];
+  document.getElementById('cal-bars').innerHTML = buckets.map(b=>`
+    <div class="cal-col">
+      <div class="cal-bar-pair">
+        <div class="cal-bar predicted" style="height:${b.predicted}%"></div>
+        <div class="cal-bar actual" style="height:${b.actual}%"></div>
+      </div>
+      <div class="cal-label">${b.label}</div>
+    </div>
+  `).join('');
+})();
+
+/* ---- Chatbot ---- */
+(function(){
+  const body = document.getElementById('chat-body');
+  const input = document.getElementById('chat-input');
+  const sendBtn = document.getElementById('chat-send');
+
+  const knowledge = {
+    btc: {
+      name: 'Bitcoin',
+      summary: "I'm leaning bullish on Bitcoin this week — 58% confidence, not a strong call.",
+      reasoning: "Here's how I got there: <b>ETF inflows (weighted heaviest)</b> are still positive, which pulls me bullish — but they're down about 15% week-over-week, which is why I'm not more confident. <b>Technicals</b> are supportive but flattening, so that's a small positive, not a strong one. <b>Sentiment</b> is mildly positive, adding a little more weight to the bullish side. The main thing capping my confidence is <b>macro risk</b> — Thursday's Fed minutes could move price sharply either way, and I can't weight an unknown event heavily in either direction. Net: three signals lean bullish, one is a wildcard, so 58% reflects a real but weak lean, not a strong call.",
+      signals: {
+        'Technicals': "Price is holding above the 50-day moving average, but momentum has flattened over the last 3 days.",
+        'Sentiment': "Social and news sentiment is mildly positive, though less euphoric than two weeks ago.",
+        'On-chain flows': "ETF inflows are still positive but down about 15% week-over-week — the main reason my confidence isn't higher.",
+        'Macro risk': "Thursday's Fed minutes are the biggest wildcard. A hawkish surprise could flip this quickly."
+      }
+    },
+    nvda: {
+      name: 'NVDA',
+      summary: "NVDA is leaning bullish at 64% confidence.",
+      reasoning: "Here's how I got there: <b>earnings trend</b> is the strongest signal — the last two quarters beat estimates specifically on data-center revenue, which is the core of the bull case. <b>Technical momentum</b> supports it too, though I discounted it slightly since volume has been thinner on recent up days, which can mean the move is less convicted. <b>Sentiment</b> is genuinely split — long-term bullish, short-term cautious — so I treated it as roughly neutral rather than a tiebreaker. <b>Insider activity</b> showed nothing unusual, so it didn't move the needle either way. The one thing holding me under 70%: yesterday's supplier delay headline hasn't fully priced in yet, and earnings are two weeks out, which is real uncertainty I can't ignore.",
+      signals: {
+        'Earnings trend': "Last two quarters beat estimates on data-center revenue specifically.",
+        'Technical momentum': "Strong uptrend, but volume has been thinner on the last few up days.",
+        'Sentiment': "Mixed — analysts are bullish long-term but cautious about near-term supply chain risk.",
+        'Insider activity': "No unusual insider buying or selling in the last 30 days."
+      }
+    },
+    aapl: {
+      name: 'AAPL',
+      summary: "AAPL is close to a coin flip — 52% confidence, barely leaning bullish.",
+      reasoning: "Here's how I got there: <b>earnings trend</b> is flat — no clear beat or miss pattern recently, so it's not pulling me either direction. <b>Technical momentum</b> is actually a mild negative — the stock has been range-bound with weak follow-through on up days. What's keeping this from going bearish is <b>insider activity</b> showing slight buying, a small positive signal. <b>Sentiment</b> is cautious, not negative, mostly waiting on the next product cycle for a real catalyst. With no signal strongly pulling either way, 52% reflects genuine uncertainty rather than a real edge.",
+      signals: {
+        'Earnings trend': "Flat — no clear beat or miss pattern over the last few quarters.",
+        'Technical momentum': "Weak — range-bound price action with limited follow-through.",
+        'Sentiment': "Cautious. Most analysts are waiting on the next product cycle.",
+        'Insider activity': "Slight insider buying recently — a small positive signal."
+      }
+    },
+    tsla: {
+      name: 'TSLA',
+      summary: "TSLA is leaning bearish at 41% confidence (bullish).",
+      reasoning: "Here's how I got there: <b>sentiment</b> is the heaviest weight here and it's negative — the news cycle has been rough lately. <b>Insider activity</b> compounds that, with more selling than buying in the last 30 days, which is rarely a great sign. <b>Technical momentum</b> is genuinely volatile, not clearly down, so I only let it pull my confidence slightly rather than heavily. <b>Earnings trend</b> is mixed, not disastrous, which is the main reason this isn't a stronger bearish call. Net: two signals lean bearish, one is neutral-ish, one is noisy — 41% reflects a real lean, not high conviction.",
+      signals: {
+        'Earnings trend': "Mixed — some segments beating, others missing expectations.",
+        'Technical momentum': "Volatile, with no clear directional trend right now.",
+        'Sentiment': "Negative — the recent news cycle has weighed on perception.",
+        'Insider activity': "More selling than buying over the last 30 days."
+      }
+    },
+    msft: {
+      name: 'MSFT',
+      summary: "MSFT is leaning bullish at 71% confidence — my strongest current call.",
+      reasoning: "Here's how I got there: nearly every signal agrees, which is unusual and why confidence is higher than normal. <b>Earnings trend</b> has been consistently positive. <b>Technical momentum</b> is strong with healthy volume behind it, not just a thin move. <b>Sentiment</b> is positive across both analysts and retail chatter. <b>Insider activity</b> is neutral, which is the only thing keeping this from being even higher — no extra conviction from insiders either way. When multiple independent signals agree this cleanly, I weight the combined call higher than any single signal alone.",
+      signals: {
+        'Earnings trend': "Consistently positive over recent quarters.",
+        'Technical momentum': "Strong, with healthy volume supporting the move.",
+        'Sentiment': "Positive across both analyst coverage and retail sentiment.",
+        'Insider activity': "Neutral — no notable buying or selling pattern."
+      }
+    }
+  };
+
+  function addMsg(html, sender, signals){
+    const wrap = document.createElement('div');
+    wrap.className = 'msg ' + sender;
+    wrap.innerHTML = html;
+    if(signals){
+      const row = document.createElement('div');
+      row.className = 'msg-signals';
+      Object.keys(signals).forEach(key=>{
+        const b = document.createElement('button');
+        b.textContent = key;
+        b.onclick = ()=>{
+          addMsg(signals[key], 'bot');
+          body.scrollTop = body.scrollHeight;
+        };
+        row.appendChild(b);
+      });
+      wrap.appendChild(row);
+    }
+    body.appendChild(wrap);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function explain(asset){
+    addMsg(asset.summary, 'bot');
+    setTimeout(()=>{
+      addMsg(asset.reasoning, 'bot', asset.signals);
+    }, 500);
+  }
+
+  function respond(text){
+    const lower = text.toLowerCase();
+
+    if(lower.includes('disagree') || lower.includes('wrong') || lower.includes('no way')){
+      addMsg("Fair — what's your reasoning? If you've got a specific catalyst I'm not weighing enough, tell me and I'll factor it in. Otherwise, my call is based on the weighted signals above, and none of them are strong enough on their own to justify being more confident than I am.", 'bot');
+      return;
+    }
+    if(/\b(hi|hello|hey)\b/.test(lower)){
+      addMsg("Hey — ask me about Bitcoin, NVDA, AAPL, TSLA, or MSFT and I'll walk you through my current read and the reasoning behind it.", 'bot');
+      return;
+    }
+    if(lower.includes('thank')){
+      addMsg("Anytime. If you want to challenge a call, I'm genuinely open to it — that's the whole point.", 'bot');
+      return;
+    }
+    if(lower.includes('how') && (lower.includes('work') || lower.includes('you predict') || lower.includes('calibrat'))){
+      addMsg("I weigh a handful of signals for each asset — things like earnings or on-chain trends, technical momentum, sentiment, and insider activity — and combine them into a confidence level, not a flat yes/no. I also track my own accuracy over time, so if I say I'm 70% confident, that number is meant to actually mean something. Try asking about a specific asset and I'll show you the breakdown live.", 'bot');
+      return;
+    }
+    if(lower.includes('bitcoin') || lower.includes('btc')){
+      explain(knowledge.btc);
+      return;
+    }
+    if(lower.includes('nvda') || lower.includes('nvidia')){
+      explain(knowledge.nvda);
+      return;
+    }
+    if(lower.includes('aapl') || lower.includes('apple')){
+      explain(knowledge.aapl);
+      return;
+    }
+    if(lower.includes('tsla') || lower.includes('tesla')){
+      explain(knowledge.tsla);
+      return;
+    }
+    if(lower.includes('msft') || lower.includes('microsoft')){
+      explain(knowledge.msft);
+      return;
+    }
+    addMsg("I can walk through Bitcoin, NVDA, AAPL, TSLA, or MSFT right now in this demo — try naming one of those, or ask how I form a prediction.", 'bot');
+  }
+
+  function send(text){
+    if(!text.trim()) return;
+    addMsg(text, 'user');
+    input.value = '';
+    setTimeout(()=>respond(text), 400);
+  }
+
+  sendBtn.onclick = ()=> send(input.value);
+  input.addEventListener('keydown', e=>{ if(e.key==='Enter') send(input.value); });
+  document.querySelectorAll('.chat-quick button').forEach(btn=>{
+    btn.onclick = ()=> send(btn.dataset.q);
+  });
+
+  addMsg("Ask me about Bitcoin or a stock — I'll give you my call, walk through exactly how I weighted each signal to get there, and you can tap any signal below for more detail.", 'bot');
+})();
+
+/* ---- Contact form ---- */
+(function(){
+  const form = document.getElementById('contact-form');
+  const confirm = document.getElementById('contact-confirm');
+  if(!form) return;
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    form.style.display = 'none';
+    confirm.style.display = 'block';
+  });
+})();
+</script>
+
+</body>
+</html>
